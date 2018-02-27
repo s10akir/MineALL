@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
  */
 public class EventListener implements Listener {
     private Tool tool = new Tool();
-    private short toolDamage;
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -28,8 +27,7 @@ public class EventListener implements Listener {
                     short durability = itemInHand.getDurability();;
                     location = block.getLocation();
 
-                    toolDamage = 0;
-                    cutLog(location);
+                    short toolDamage = cutLog(location);
 
                     // Unbreakingエンチャントの処理
                     switch (itemInHand.getEnchantmentLevel(Enchantment.DURABILITY)) {
@@ -66,7 +64,8 @@ public class EventListener implements Listener {
      * @since : 2018/02/28
      * @param location : 起点ブロックの座標
      */
-    private void cutLog(Location location) {
+    private short cutLog(Location location) {
+        short toolDamage = 0;
         Location newLocation;
         int X = location.getBlockX();
         int Y = location.getBlockY();
@@ -77,7 +76,7 @@ public class EventListener implements Listener {
             newLocation.getBlock().breakNaturally();
             toolDamage++;
 
-            cutLog(newLocation);
+            toolDamage += cutLog(newLocation);
         }
 
         newLocation = new Location(location.getWorld(), X + 1, Y, Z);
@@ -85,7 +84,7 @@ public class EventListener implements Listener {
             newLocation.getBlock().breakNaturally();
             toolDamage++;
 
-            cutLog(newLocation);
+            toolDamage += cutLog(newLocation);
         }
 
         newLocation = new Location(location.getWorld(), X, Y + 1, Z);
@@ -93,7 +92,7 @@ public class EventListener implements Listener {
             newLocation.getBlock().breakNaturally();
             toolDamage++;
 
-            cutLog(newLocation);
+            toolDamage += cutLog(newLocation);
         }
 
         newLocation = new Location(location.getWorld(), X, Y - 1, Z);
@@ -101,7 +100,7 @@ public class EventListener implements Listener {
             newLocation.getBlock().breakNaturally();
             toolDamage++;
 
-            cutLog(newLocation);
+            toolDamage += cutLog(newLocation);
         }
 
         newLocation = new Location(location.getWorld(), X, Y, Z + 1);
@@ -109,7 +108,7 @@ public class EventListener implements Listener {
             newLocation.getBlock().breakNaturally();
             toolDamage++;
 
-            cutLog(newLocation);
+            toolDamage += cutLog(newLocation);
         }
 
         newLocation = new Location(location.getWorld(), X, Y, Z - 1);
@@ -117,7 +116,9 @@ public class EventListener implements Listener {
             newLocation.getBlock().breakNaturally();
             toolDamage++;
 
-            cutLog(newLocation);
+            toolDamage += cutLog(newLocation);
         }
+
+        return toolDamage;
     }
 }
