@@ -24,7 +24,7 @@ public class EventListener implements Listener {
 
                 if (tool.getType(itemInHand).equals("AXE")) {
                     Location location;
-                    short durability = itemInHand.getDurability();;
+                    short durability = itemInHand.getDurability();
                     location = block.getLocation();
 
                     short toolDamage = cutLog(location);
