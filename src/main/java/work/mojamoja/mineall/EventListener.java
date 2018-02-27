@@ -66,18 +66,22 @@ public class EventListener implements Listener {
         short toolDamage = recursiveMine(location, block.getType(), itemInHand);
 
         // Unbreakingエンチャントの処理
+        short tmp = toolDamage;
         switch (itemInHand.getEnchantmentLevel(Enchantment.DURABILITY)) {
             case 1:
-                toolDamage *= 0.5;
+                tmp *= 0.5;
                 break;
             case 2:
-                toolDamage *= 0.33;
+                tmp *= 0.33;
                 break;
             case 3:
-                toolDamage *= 0.25;
+                tmp *= 0.25;
                 break;
 
             default:
+        }
+        if (tmp > 0) {
+            toolDamage = tmp;
         }
 
         durability += toolDamage;
