@@ -1,0 +1,3 @@
+name: MineALL
+version: ${project.version}
+main: work.mojamoja.mineall.MineALL
