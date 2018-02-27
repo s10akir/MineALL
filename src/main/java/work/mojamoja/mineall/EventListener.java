@@ -30,6 +30,21 @@ public class EventListener implements Listener {
                 }
                 break;
             }
+
+            case COAL_ORE:
+            case IRON_ORE:
+            case LAPIS_ORE:
+            case REDSTONE_ORE:
+            case GLOWING_REDSTONE_ORE:
+            case DIAMOND_ORE: {
+                ItemStack itemInHand = event.getPlayer().getItemInHand();
+
+                if (tool.getType(itemInHand).equals("PICKAXE")) {
+                    mineAll(event);
+                }
+                break;
+            }
+
             default:
         }
         Bukkit.broadcastMessage(event.getBlock().toString());
