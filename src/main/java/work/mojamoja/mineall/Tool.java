@@ -2,8 +2,6 @@ package work.mojamoja.mineall;
 
 import org.bukkit.inventory.ItemStack;
 
-import static org.bukkit.Material.IRON_AXE;
-
 /**
  * @author : akira.shinohara
  * @since : 2018/02/28
