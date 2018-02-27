@@ -1,12 +1,14 @@
 package work.mojamoja.mineall;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 /**
  * @author : akira.shinohara
@@ -65,58 +67,26 @@ public class EventListener implements Listener {
      * @param location : 起点ブロックの座標
      */
     private short cutLog(Location location) {
-        short toolDamage = 0;
         Location newLocation;
-        int X = location.getBlockX();
-        int Y = location.getBlockY();
-        int Z = location.getBlockZ();
+        short toolDamage = 0;
+        Vector[] vectors = {new Vector(1, 0, 0),
+                            new Vector(-1, 0 , 0),
+                            new Vector(0, 1 , 0),
+                            new Vector(0, -1 , 0),
+                            new Vector(0, 0 , 1),
+                            new Vector(0, 0 , -1)
+        };
 
-        newLocation = new Location(location.getWorld(), X - 1, Y, Z);
-        if (newLocation.getBlock().getType().toString().equals("LOG")) {
-            newLocation.getBlock().breakNaturally();
-            toolDamage++;
+        for (Vector vector: vectors) {
+            newLocation = location.clone();
+            newLocation.add(vector);
 
-            toolDamage += cutLog(newLocation);
-        }
+            if (newLocation.getBlock().getType() == Material.LOG) {
+                newLocation.getBlock().breakNaturally();
+                toolDamage++;
 
-        newLocation = new Location(location.getWorld(), X + 1, Y, Z);
-        if (newLocation.getBlock().getType().toString().equals("LOG")) {
-            newLocation.getBlock().breakNaturally();
-            toolDamage++;
-
-            toolDamage += cutLog(newLocation);
-        }
-
-        newLocation = new Location(location.getWorld(), X, Y + 1, Z);
-        if (newLocation.getBlock().getType().toString().equals("LOG")) {
-            newLocation.getBlock().breakNaturally();
-            toolDamage++;
-
-            toolDamage += cutLog(newLocation);
-        }
-
-        newLocation = new Location(location.getWorld(), X, Y - 1, Z);
-        if (newLocation.getBlock().getType().toString().equals("LOG")) {
-            newLocation.getBlock().breakNaturally();
-            toolDamage++;
-
-            toolDamage += cutLog(newLocation);
-        }
-
-        newLocation = new Location(location.getWorld(), X, Y, Z + 1);
-        if (newLocation.getBlock().getType().toString().equals("LOG")) {
-            newLocation.getBlock().breakNaturally();
-            toolDamage++;
-
-            toolDamage += cutLog(newLocation);
-        }
-
-        newLocation = new Location(location.getWorld(), X, Y, Z - 1);
-        if (newLocation.getBlock().getType().toString().equals("LOG")) {
-            newLocation.getBlock().breakNaturally();
-            toolDamage++;
-
-            toolDamage += cutLog(newLocation);
+                toolDamage += cutLog(newLocation);
+            }
         }
 
         return toolDamage;
