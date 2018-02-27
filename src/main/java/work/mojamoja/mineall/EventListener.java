@@ -96,10 +96,12 @@ public class EventListener implements Listener {
             newLocation.add(vector);
 
             if (newLocation.getBlock().getType() == material) {
-                newLocation.getBlock().breakNaturally(itemInHand);
-                toolDamage++;
+                if (itemInHand.getEnchantmentLevel(Enchantment.SILK_TOUCH) != 1) {
+                    newLocation.getBlock().breakNaturally(itemInHand);
+                    toolDamage++;
 
-                toolDamage += recursiveMine(newLocation, material, itemInHand);
+                    toolDamage += recursiveMine(newLocation, material, itemInHand);
+                }
             }
         }
 
