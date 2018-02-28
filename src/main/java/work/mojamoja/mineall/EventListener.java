@@ -11,6 +11,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import static org.bukkit.Material.AIR;
+
 /**
  * @author : akira.shinohara
  * @since : 2018/02/28
@@ -40,6 +42,10 @@ public class EventListener implements Listener {
                 ItemStack itemInHand = event.getPlayer().getItemInHand();
 
                 if (tool.getType(itemInHand).equals("PICKAXE")) {
+                    // シルクタッチの場合通常ドロップを無効化
+                    if (itemInHand.getEnchantmentLevel(Enchantment.SILK_TOUCH) == 1) {
+                        event.setDropItems(false);
+                    }
                     mineAll(event);
                 }
                 break;
@@ -84,6 +90,11 @@ public class EventListener implements Listener {
             toolDamage = tmp;
         }
 
+        // シルクタッチで一括破壊がおこならかった場合のドロップ
+        if (toolDamage == 0 && itemInHand.getEnchantmentLevel(Enchantment.SILK_TOUCH) == 1) {
+            location.getWorld().dropItemNaturally(location, new ItemStack(event.getBlock().getType()));
+        }
+
         durability += toolDamage;
         // 耐久値の適用
         itemInHand.setDurability(durability);
@@ -102,6 +113,7 @@ public class EventListener implements Listener {
     private short recursiveMine(Location location, Material material, ItemStack itemInHand) {
         Location newLocation;
         short toolDamage = 0;
+        Material blockType = material;
         Vector[] vectors = {new Vector(1, 0, 0),
                             new Vector(-1, 0 , 0),
                             new Vector(0, 1 , 0),
@@ -113,14 +125,17 @@ public class EventListener implements Listener {
         for (Vector vector: vectors) {
             newLocation = location.clone();
             newLocation.add(vector);
-
             if (newLocation.getBlock().getType() == material) {
-                if (itemInHand.getEnchantmentLevel(Enchantment.SILK_TOUCH) != 1) {
+                // シルクタッチの場合ブロックをAIRで置き換えドロップすることで擬似的に再現
+                if (itemInHand.getEnchantmentLevel(Enchantment.SILK_TOUCH) == 1) {
+                    newLocation.getBlock().setType(AIR);
+                    newLocation.getWorld().dropItemNaturally(newLocation, new ItemStack(blockType));
+                } else {
                     newLocation.getBlock().breakNaturally(itemInHand);
-                    toolDamage++;
-
-                    toolDamage += recursiveMine(newLocation, material, itemInHand);
                 }
+                toolDamage++;
+
+                toolDamage += recursiveMine(newLocation, blockType, itemInHand);
             }
         }
 
